@@ -1,0 +1,82 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" Width="380" Height="250"
+		
+	    WindowStartupLocation="CenterOwner"
+		
+		xmlns:vm="using:AvaloniaApplication12.ViewModels"
+		x:DataType="vm:AddPersonViewModel"
+		
+        x:Class="AvaloniaApplication12.AddPerson"
+        Title="AddPerson">
+	<Grid ColumnDefinitions="160, 3, Auto"
+			RowDefinitions="Auto,Auto,Auto,Auto,Auto, *"
+			   Margin="15,20,20,0">
+
+		<TextBlock Grid.Column="0"
+		   Grid.Row="0"
+		   HorizontalAlignment="Right"> FirstName: </TextBlock>
+		<TextBlock Grid.Column="0"
+		   Grid.Row="1"
+		   HorizontalAlignment="Right"> LastName: </TextBlock>
+		<TextBlock Grid.Column="0"
+		   Grid.Row="2"
+		   HorizontalAlignment="Right"> DepartmentNumber: </TextBlock>
+		<TextBlock Grid.Column="0"
+		   Grid.Row="3"
+		   HorizontalAlignment="Right"> DeskLocation: </TextBlock>
+
+		<TextBox x:Name="tFirstName"
+		   Text="{Binding FirstName}"
+		   Grid.Column="2"
+		   Margin="0,0,0,3"
+		   Grid.Row="0"
+		   Width="150"
+		   HorizontalAlignment="Left"/>
+		<TextBox x:Name="tLastName"
+		   Text="{Binding LastName}"
+		   Grid.Column="2"
+		   Margin="0,0,0,3"
+		   Grid.Row="1"
+		   Width="150"
+		   HorizontalAlignment="Left"/>
+		<TextBox x:Name="tDepartmentNumber"
+		   Text="{Binding DepartmentNumber}"
+		   Grid.Column="2"
+		   Margin="0,0,0,3"
+		   Grid.Row="2"
+		   Width="150"
+		   HorizontalAlignment="Left"/>
+		<TextBox x:Name="tDeskLocation"
+		   Text="{Binding DeskLocation}"
+		   Grid.Column="2"
+		   Margin="0,0,0,3"
+		   Grid.Row="3"
+		   Width="150"
+		   HorizontalAlignment="Left"/>
+
+		<Button x:Name="bCancel"
+				Height="28"
+				Margin="10,0,0,15"
+				VerticalAlignment="Bottom"
+				HorizontalAlignment="Stretch"
+				HorizontalContentAlignment="Center"
+				Grid.Column="0"
+				Grid.Row="5">
+			Cancel
+		</Button>
+		<Button x:Name="bSavePerson"
+				Height="28"
+				Margin="10,0,0,15"
+				VerticalAlignment="Bottom"
+				HorizontalAlignment="Stretch"
+				HorizontalContentAlignment="Center"
+				Command="{Binding SavePerson}"
+				Grid.Column="2"
+				Grid.Row="5">
+			Save Person
+		</Button>
+	</Grid>
+</Window>

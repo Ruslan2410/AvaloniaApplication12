@@ -1,12 +1,7 @@
 ﻿using AvaloniaApplication12.Models;
-using AvaloniaApplication12.Views;
+using Npgsql;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Data.SQLite;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AvaloniaApplication12
 {
@@ -21,10 +16,10 @@ namespace AvaloniaApplication12
         {
             this.Add(new Product
             {
-                ProductID= productid,
+                ProductID = productid,
                 Name = name,
                 Category = category,
-                Price = price,                
+                Price = price,
                 Quantity = quantity
             });
         }
@@ -38,33 +33,40 @@ namespace AvaloniaApplication12
         {
             this.Clear();
 
-            string connString = String.Format("Data Source={0};New=False;Version=3", MainWindow.mDBPath);
-            SQLiteConnection sqlite_conn = new SQLiteConnection(connString);
-            sqlite_conn.Open();
-
-            string sql = String.Format("Select * from Products;");
-
-            SQLiteCommand sqlite_cmd = new SQLiteCommand(sql, sqlite_conn);
-            try
+            // Змініть це на ваші дані підключення до PostgreSQL
+            string connString = "Host=localhost:5432;Username=postgres;Password=postgres;Database=Employee";
+            using (NpgsqlConnection npgsql_conn = new NpgsqlConnection(connString))
             {
-                SQLiteDataReader reader = (SQLiteDataReader)sqlite_cmd.ExecuteReader();
-                while (reader.Read())
-                {
-                    int productid = Convert.ToInt32(reader["productid"]);
-                    string name = Convert.ToString(reader["name"]);
-                    string category = Convert.ToString(reader["category"]);
-                    decimal price = Convert.ToDecimal(reader["price"]);
-                    int quantity = Convert.ToInt32(reader["quantity"]);
+                npgsql_conn.Open();
 
-                    AddProduct(productid, name, category, price, quantity);
+                string sql = "SELECT * FROM Products";
+
+                using (NpgsqlCommand npgsql_cmd = new NpgsqlCommand(sql, npgsql_conn))
+                {
+                    try
+                    {
+                        using (NpgsqlDataReader reader = npgsql_cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                int productid = reader.GetInt32(reader.GetOrdinal("productid"));
+                                string name = reader.GetString(reader.GetOrdinal("name"));
+                                string category = reader.GetString(reader.GetOrdinal("category"));
+                                decimal price = reader.GetDecimal(reader.GetOrdinal("price"));
+                                int quantity = reader.GetInt32(reader.GetOrdinal("quantity"));
+
+                                AddProduct(productid, name, category, price, quantity);
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Error: " + ex.Message);
+                    }
                 }
-                reader.Close();
-                sqlite_conn.Close();
             }
-            catch (Exception ex) { }
 
             return this;
         }
     }
-    
 }

@@ -9,21 +9,27 @@ using System;
 using System.Reactive.Disposables;
 
 namespace AvaloniaApplication12;
-    
+	
 public partial class AddProduct : ReactiveWindow<AddProductViewModel>
 {
-    public AddProduct()
-    {
-        InitializeComponent();
-        this.WhenActivated(OnActivated);
-    }
+	public AddProduct()
+	{
+		InitializeComponent();
+		this.WhenActivated(OnActivated);
+		var bCancel = this.FindControl<Button>("bCancel");
+		bCancel.Click += BCancel_Click;
+	}
 
-    private void OnActivated(CompositeDisposable disposables)
-    {
-        ViewModel!.SaveProduct.Subscribe(Close).DisposeWith(disposables);
-        if (ViewModel!.mode == "edit")
+	private void OnActivated(CompositeDisposable disposables)
+	{
+		ViewModel!.SaveProduct.Subscribe(Close).DisposeWith(disposables);
+		if (ViewModel!.mode == "edit")
+		{
+			//ViewModel!.Name = ViewModel!.ProductItem.Name;
+		}
+	}
+	private void BCancel_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
-            //ViewModel!.Name = ViewModel!.ProductItem.Name;
+            Close(); // Закрываем текущее окно
         }
-    }
 }

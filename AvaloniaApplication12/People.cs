@@ -1,12 +1,7 @@
 ﻿using AvaloniaApplication12.Models;
-using AvaloniaApplication12.Views;
+using Npgsql;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Data.SQLite;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AvaloniaApplication12
 {
@@ -37,30 +32,38 @@ namespace AvaloniaApplication12
         {
             this.Clear();
 
-            string connString = String.Format("Data Source={0};New=False;Version=3", MainWindow.mDBPath);
-            SQLiteConnection sqlite_conn = new SQLiteConnection(connString);
-            sqlite_conn.Open();
-
-            string sql = String.Format("Select * from Person order by LastName;");
-
-            SQLiteCommand sqlite_cmd = new SQLiteCommand(sql, sqlite_conn);
-            try
+            // Змініть це на ваші дані підключення до PostgreSQL
+            string connString = "Host=localhost:5432;Username=postgres;Password=postgres;Database=Employee";
+            using (NpgsqlConnection npgsql_conn = new NpgsqlConnection(connString))
             {
-                SQLiteDataReader reader = (SQLiteDataReader)sqlite_cmd.ExecuteReader();
-                while (reader.Read())
-                {
-                    int EmployeeNumber = Convert.ToInt32(reader["EmployeeNumber"]);
-                    string firstName = Convert.ToString(reader["firstName"]);
-                    string lastName = Convert.ToString(reader["lastName"]);
-                    int departmentNumber = Convert.ToInt32(reader["departmentNumber"]);
-                    string deskLocation = Convert.ToString(reader["deskLocation"]);
+                npgsql_conn.Open();
 
-                    AddPerson(departmentNumber, EmployeeNumber, deskLocation, firstName, lastName);
+                string sql = "SELECT * FROM Person ORDER BY LastName";
+
+                using (NpgsqlCommand npgsql_cmd = new NpgsqlCommand(sql, npgsql_conn))
+                {
+                    try
+                    {
+                        using (NpgsqlDataReader reader = npgsql_cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                int employeeNumber = reader.GetInt32(reader.GetOrdinal("EmployeeNumber"));
+                                string firstName = reader.GetString(reader.GetOrdinal("FirstName"));
+                                string lastName = reader.GetString(reader.GetOrdinal("LastName"));
+                                int departmentNumber = reader.GetInt32(reader.GetOrdinal("DepartmentNumber"));
+                                string deskLocation = reader.GetString(reader.GetOrdinal("DeskLocation"));
+
+                                AddPerson(departmentNumber, employeeNumber, deskLocation, firstName, lastName);
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Error: " + ex.Message);
+                    }
                 }
-                reader.Close();
-                sqlite_conn.Close();
             }
-            catch (Exception ex) { }
 
             return this;
         }

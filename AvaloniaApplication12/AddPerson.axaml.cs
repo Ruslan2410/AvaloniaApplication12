@@ -12,18 +12,25 @@ namespace AvaloniaApplication12;
 
 public partial class AddPerson : ReactiveWindow<AddPersonViewModel>
 {
-    public AddPerson()
-    {
-        InitializeComponent();
-        this.WhenActivated(OnActivated);
-    }
+	public AddPerson()
+	{
+		InitializeComponent();
+		this.WhenActivated(OnActivated);
+		var bCancel = this.FindControl<Button>("bCancel");
+		bCancel.Click += BCancel_Click;
+	}
 
-    private void OnActivated(CompositeDisposable disposables)
-    {
-        ViewModel!.SavePerson.Subscribe(Close).DisposeWith(disposables);
-        if (ViewModel!.mode == "edit")
-        {
-            ViewModel!.FirstName = ViewModel!.PersonItem.FirstName;
-        }
-    }
+	private void OnActivated(CompositeDisposable disposables)
+	{
+		
+		ViewModel!.SavePerson.Subscribe(Close).DisposeWith(disposables);
+		if (ViewModel!.mode == "edit")
+		{
+			ViewModel!.FirstName = ViewModel!.PersonItem.FirstName;
+		}
+	}
+		private void BCancel_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+		{
+			Close(); // Закрываем текущее окно
+		}
 }

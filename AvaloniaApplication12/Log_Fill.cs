@@ -1,12 +1,7 @@
 ﻿using AvaloniaApplication12.Models;
-using AvaloniaApplication12.Views;
+using Npgsql;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Data.SQLite;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AvaloniaApplication12
 {
@@ -34,28 +29,36 @@ namespace AvaloniaApplication12
         {
             this.Clear();
 
-            string connString = String.Format("Data Source={0};New=False;Version=3", MainWindow.mDBPath);
-            SQLiteConnection sqlite_conn = new SQLiteConnection(connString);
-            sqlite_conn.Open();
-
-            string sql = String.Format("Select * from Logs;");
-
-            SQLiteCommand sqlite_cmd = new SQLiteCommand(sql, sqlite_conn);
-            try
+            // Змініть це на ваші дані підключення до PostgreSQL
+            string connString = "Host=localhost:5432;Username=postgres;Password=postgres;Database=Employee";
+            using (NpgsqlConnection npgsql_conn = new NpgsqlConnection(connString))
             {
-                SQLiteDataReader reader = (SQLiteDataReader)sqlite_cmd.ExecuteReader();
-                while (reader.Read())
-                {
-                    int logid = Convert.ToInt32(reader["LogID"]);
-                    string action = Convert.ToString(reader["Action"]);
-                    DateTime timestamp = Convert.ToDateTime(reader["Timestamp"]);
+                npgsql_conn.Open();
 
-                    AddLog(logid, action, timestamp);
+                string sql = "SELECT * FROM Logs";
+
+                using (NpgsqlCommand npgsql_cmd = new NpgsqlCommand(sql, npgsql_conn))
+                {
+                    try
+                    {
+                        using (NpgsqlDataReader reader = npgsql_cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                int logid = reader.GetInt32(reader.GetOrdinal("LogID"));
+                                string action = reader.GetString(reader.GetOrdinal("Action"));
+                                DateTime timestamp = reader.GetDateTime(reader.GetOrdinal("Timestamp"));
+
+                                AddLog(logid, action, timestamp);
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Error: " + ex.Message);
+                    }
                 }
-                reader.Close();
-                sqlite_conn.Close();
             }
-            catch (Exception ex) {  }
 
             return this;
         }

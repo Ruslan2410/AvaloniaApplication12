@@ -1,11 +1,5 @@
-﻿using AvaloniaApplication12.Views;
-using Microsoft.SqlServer.Server;
+﻿using Npgsql;
 using System;
-using System.Collections.Generic;
-using System.Data.SQLite;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AvaloniaApplication12
 {
@@ -15,22 +9,27 @@ namespace AvaloniaApplication12
         {
             bool result = false;
 
-            string connString = String.Format("Data Source={0};New=False;Version=3", MainWindow.mDBPath);
-            SQLiteConnection sqlite_conn = new SQLiteConnection(connString);
-            sqlite_conn.Open();
-
-            SQLiteCommand sqlite_cmd = new SQLiteCommand(sql, sqlite_conn);
-            try
+            // Змініть це на ваші дані підключенsня до PostgreSQL
+            string connString = "Host=localhost:5432;Username=postgres;Password=postgres;Database=Employee";
+            using (NpgsqlConnection npgsql_conn = new NpgsqlConnection(connString))
             {
-                sqlite_cmd.ExecuteNonQuery();
-                result = true;
-            }
-            catch (Exception ex)
-            {
-                result = false;
+                npgsql_conn.Open();
+
+                using (NpgsqlCommand npgsql_cmd = new NpgsqlCommand(sql, npgsql_conn))
+                {
+                    try
+                    {
+                        npgsql_cmd.ExecuteNonQuery();
+                        result = true;
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Error: " + ex.Message);
+                        result = false;
+                    }
+                }
             }
 
-            sqlite_conn.Close();
             return result;
         }
     }

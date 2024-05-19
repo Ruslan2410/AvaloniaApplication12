@@ -38,6 +38,6 @@ namespace AvaloniaApplication12.Views
                 action(ViewModel!.ShowDialogp.RegisterHandler(DoShowDialogAsyncP)));
         }
 
-        
+
     }
 }

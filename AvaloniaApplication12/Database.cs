@@ -27,6 +27,7 @@ namespace AvaloniaApplication12
             }
             catch (Exception ex)
             {
+                Console.WriteLine("Error: " + ex.Message);
                 result = false;
             }
 

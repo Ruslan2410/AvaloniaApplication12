@@ -60,7 +60,10 @@ namespace AvaloniaApplication12
                 reader.Close();
                 sqlite_conn.Close();
             }
-            catch (Exception ex) { }
+            catch (Exception ex) 
+            {
+                Console.WriteLine("Error: " + ex.Message);
+            }
 
             return this;
         }

@@ -16,6 +16,8 @@ public partial class AddPerson : ReactiveWindow<AddPersonViewModel>
     {
         InitializeComponent();
         this.WhenActivated(OnActivated);
+        var bCancel = this.FindControl<Button>("bCancel");
+        bCancel.Click += BCancel_Click;
     }
 
     private void OnActivated(CompositeDisposable disposables)
@@ -25,5 +27,9 @@ public partial class AddPerson : ReactiveWindow<AddPersonViewModel>
         {
             ViewModel!.FirstName = ViewModel!.PersonItem.FirstName;
         }
+    }
+    private void BCancel_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        Close(); // Закрываем текущее окно
     }
 }

@@ -16,6 +16,8 @@ public partial class AddProduct : ReactiveWindow<AddProductViewModel>
     {
         InitializeComponent();
         this.WhenActivated(OnActivated);
+        var bCancel = this.FindControl<Button>("bCancel");
+        bCancel.Click += BCancel_Click;
     }
 
     private void OnActivated(CompositeDisposable disposables)
@@ -25,5 +27,9 @@ public partial class AddProduct : ReactiveWindow<AddProductViewModel>
         {
             //ViewModel!.Name = ViewModel!.ProductItem.Name;
         }
+    }
+    private void BCancel_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        Close(); // Закрываем текущее окно
     }
 }

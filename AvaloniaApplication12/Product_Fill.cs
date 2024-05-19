@@ -21,10 +21,10 @@ namespace AvaloniaApplication12
         {
             this.Add(new Product
             {
-                ProductID= productid,
+                ProductID = productid,
                 Name = name,
                 Category = category,
-                Price = price,                
+                Price = price,
                 Quantity = quantity
             });
         }
@@ -61,10 +61,13 @@ namespace AvaloniaApplication12
                 reader.Close();
                 sqlite_conn.Close();
             }
-            catch (Exception ex) { }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: " + ex.Message);
+            }
 
             return this;
         }
     }
-    
+
 }
